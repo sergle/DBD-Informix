@@ -1,0 +1,51 @@
+Checklist for Releasing a New Version of DBD::Informix
+======================================================
+
+1.  Announce
+    - Up to date email addresses
+    - Up to date summary of ChangeLog
+    - Up to date summary of future directions
+2.  Makefile.PL
+    - Correct pre-requisite version of Perl
+    - Correct pre-requisite version of DBI
+    - Correct latest version of DBI
+3.  Informix.pm
+    - Correct version number
+    - Correct pre-requisite version of DBI
+4.  ChangeLog
+    - All details up to date.
+    - Release date annotated.
+5.  Notes/Working.Versions
+    - Current working versions
+6.  README
+    - Correct information
+    - Correct pre-requisites
+    - Correct cross-references
+7.  lib/DBD/Informix/TechSupport.pm
+    - Up to date email addresses
+8.  Notes/FAQ
+    - Up to date versions, etc.
+9.  QA Tests
+    - Run some tests specifying username and password via
+      DBD_INFORMIX_USERNAME and DBD_INFORMIX_PASSWORD environment
+      variables.
+    - Run some tests (especially on HP-UX) with
+      DBD_INFORMIX_RELOCATABLE_INFORMIXDIR set.
+    - Run some tests with no ESQL/C and using "ESQL=c4gl perl Makefile.PL".
+      Note that this only works reliably if you're using the same compiler
+      that the c4gl script expects to use.  For example, on Solaris 7,
+      using Perl built with GCC fails because the '-K PIC' options passed
+      by c4gl are not understood by GCC.  You can fix this with the two
+      environment variables:
+          DBD_INFORMIX_ESQLCC_REMOVE_OPTIONS_REGEX
+          DBD_INFORMIX_ESQLLD_REMOVE_OPTIONS_REGEX
+    - Ensure that username and password are not always the same to spot
+      test failures better.
+    - Run regression tests from regression sub-directory.
+10. Make the release using jdcrelease with the -F flag.
+    - Send the announcement with PTS and checksum information to the
+      names listed in the Announce file (dbi-dev is overkill).
+
+--
+
+@(#)$Id: Release.Checklist,v 2008.1 2008/03/01 00:47:06 jleffler Exp $
