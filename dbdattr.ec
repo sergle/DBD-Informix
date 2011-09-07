@@ -56,6 +56,8 @@ static const char ix_srvrnam[] = "ix_ServerName";
 static const char ix_stoproc[] = "ix_StoredProcedures";
 static const char ix_typenam[] = "ix_NativeTypeName";
 static const char ix_worepln[] = "ix_WithoutReplication";
+/* UTF8 patch */
+static const char ix_enable_utf8[] = "ix_EnableUTF8";
 
 static const char ix_sqlcode[] = "ix_sqlcode";
 static const char ix_sqlerrd[] = "ix_sqlerrd";
@@ -213,6 +215,11 @@ int dbd_ix_db_STORE_attrib(SV *dbh, imp_dbh_t *imp_dbh, SV *keysv, SV *valuesv)
         /* Bryan Castillo: set flag for replication */
         imp_dbh->no_replication = SvTRUE(valuesv);
         dbd_ix_db_commit(dbh, imp_dbh); /* start new tran (with|w/o) repl. */
+    }
+    else if(KEY_MATCH(kl, key, ix_enable_utf8))
+    {
+        /* UTF8 patch */
+        imp_dbh->enable_utf8 = SvTRUE(valuesv);
     }
     else
     {

@@ -393,6 +393,8 @@ new_connection(imp_dbh_t *imp_dbh)
     imp_dbh->chain          = zero_link;
     imp_dbh->head           = zero_link;
     imp_dbh->dbh_pid        = getpid();
+    /* UTF8 patch */
+    imp_dbh->enable_utf8    = False;
 }
 
 /* Get the server version number from DBINFO */
@@ -2233,6 +2235,9 @@ $ifdef ESQLC_IUSTYPES;
 #endif
 $endif; -- ESQLC_IUSTYPES
     EXEC SQL END DECLARE SECTION;
+    /* UTF8 patch */
+    D_imp_dbh_from_sth;
+    int             is_char_type = 0;
 
     dbd_ix_enter(function);
 
@@ -2290,6 +2295,9 @@ $endif; -- ESQLC_IUSTYPES
                 :colind = INDICATOR, :colname = NAME;
         dbd_ix_sqlcode(imp_sth->dbh);
         dbd_ix_debug(1, "\t---- %s colno %d: coltype = %d\n", function, index, coltype);
+
+        /* UTF8 patch */
+        is_char_type = 0;
 
         if (colind != 0)
         {
@@ -2486,6 +2494,8 @@ $ifdef ESQLC_IUSTYPES;
                 if (length >= 2 && result[length-1] == '\0' && result[length-2] == '\0')
                     length -= 2;
                 /*warn("LVARCHAR Data: %d <<%s>>\n", length, result);*/
+                /* UTF8 patch */
+                is_char_type = 1;
                 break;
 #endif  /* SQLLVARCHAR */
 
@@ -2502,6 +2512,8 @@ $endif; -- ESQLC_IUSTYPES
                 result = coldata;
                 length = strlen(result);
                 /* warn("VARCHAR Data: %d <<%s>>\n", length, result); */
+                /* UTF8 patch */
+                is_char_type = 1;
                 break;
 
             case SQLCHAR:
@@ -2529,6 +2541,8 @@ $endif; -- ESQLC_IUSTYPES
                     length = byleng(result, length);
                 result[length] = '\0';
                 /* warn("Character Data: %d <<%s>>\n", length, result); */
+                /* UTF8 patch */
+                is_char_type = 1;
                 break;
 
             case SQLTEXT:
@@ -2567,6 +2581,12 @@ $endif; -- ESQLC_IUSTYPES
             }
 
             sv_setpvn(sv, result, length);
+            /* UTF8 patch */
+            if(imp_dbh->enable_utf8 && is_char_type) {
+                dbd_ix_debug(1, "\t---- UTF8 decode - colno %d: coltype = %d\n", index, coltype);
+                sv_utf8_decode(sv);
+            }
+
             if (result != coldata)
             {
                 switch (coltype)

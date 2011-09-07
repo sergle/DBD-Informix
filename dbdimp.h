@@ -113,6 +113,8 @@ struct imp_dbh_st
     Link            chain;          /* Link in list of connections */
     Link            head;           /* Head of list of statements */
     long            dbh_pid;        /* PID of Perl process creating handle */
+    /* UTF8 patch */
+    Boolean         enable_utf8;    /* Option ix_EnableUTF8 passed */
 };
 
 /* Define sth implementor data structure */
