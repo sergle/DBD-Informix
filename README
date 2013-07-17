@@ -1,3 +1,10 @@
+Patch is already included into DBD::Informix v.2013.0118
+Consider using official version:
+https://metacpan.org/module/DBD::Informix
+
+---------------------------------------------------------------------------
+
+
 README file for IBM Informix Database Driver for Perl DBI Version 2011.0612 (2011-06-12)
 
     You may distribute under the terms of either the GNU General Public
